@@ -1,0 +1,17 @@
+<package>
+  <description brief="trajectory_recorder">
+
+     trajectory_recorder
+
+  </description>
+  <author>Ross Kidson</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/trajectory_recorder</url>
+  <depend package="tf"/>
+  <depend package="roscpp"/>
+  <depend package="rospy"/>
+
+</package>
+
+

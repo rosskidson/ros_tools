@@ -1,0 +1,19 @@
+<package>
+  <description brief="feature_msgs">
+
+     feature_msgs
+
+  </description>
+  <author>Ross Kidson</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/feature_msgs</url>
+  <depend package="roscpp"/>
+  <depend package="sensor_msgs"/>
+  <export>
+      <cpp cflags="-I${prefix}/include" lflags="-L${prefix}/lib"/>
+  </export>  
+
+</package>
+
+

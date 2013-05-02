@@ -1,0 +1,19 @@
+<package>
+  <description brief="feature_visualizer">
+
+     feature_visualizer
+
+  </description>
+  <author>Ross Kidson</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/feature_visualizer</url>
+  <depend package="roscpp"/>
+  <depend package="feature_msgs"/>
+  <depend package="sensor_msgs"/>
+  <depend package="opencv2"/>
+  <depend package="cv_bridge"/>
+  <depend package="image_transport"/>
+  <depend package="message_filters"/>
+
+</package>

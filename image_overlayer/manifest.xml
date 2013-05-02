@@ -1,0 +1,20 @@
+<package>
+  <description brief="image_overlayer">
+
+     image_overlayer
+
+  </description>
+  <author>Ross Kidson</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/image_overlayer</url>
+  <depend package="roscpp"/>
+  <depend package="opencv2"/>
+  <depend package="image_transport"/>
+  <depend package="sensor_msgs"/>
+  <depend package="stereo_msgs"/>
+  <depend package="cv_bridge"/>
+
+</package>
+
+
