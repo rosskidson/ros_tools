@@ -24,6 +24,8 @@ typedef message_filters::sync_policies::ApproximateTime<sensor_msgs::Image,
 const static int queue_size = 10;
 const double alpha_ = 1.0;  //transparency for image
 const double beta_ = 0.5;   //transparency for overlay
+const static std::string image_topic = "/stereo/left/image_rect";
+const static std::string disparity_topic = "/stereo/disparity";
 ros::NodeHandle *nh_;
 ros::Subscriber subscriber_;
 ros::Publisher publisher_;
@@ -76,8 +78,8 @@ int main( int argc, char** argv )
   ros::init (argc, argv, "image_overlayer");
   nh_ = new ros::NodeHandle("~");
   publisher_ = nh_->advertise<sensor_msgs::Image> ("stereo_overlay", 1);
-  rgb_image_sub_ = new message_filters::Subscriber<sensor_msgs::Image>(*nh_, "/stereo/left/image_rect", queue_size);
-  disparity_image_sub_ = new message_filters::Subscriber<stereo_msgs::DisparityImage>(*nh_, "/stereo/disparity", queue_size);
+  rgb_image_sub_ = new message_filters::Subscriber<sensor_msgs::Image>(*nh_, image_topic, queue_size);
+  disparity_image_sub_ = new message_filters::Subscriber<stereo_msgs::DisparityImage>(*nh_, disparity_topic, queue_size);
   synchronizer_ptr_ = new message_filters::Synchronizer<syncPolicy>(syncPolicy(queue_size),  *rgb_image_sub_, *disparity_image_sub_);
   synchronizer_ptr_->registerCallback(boost::bind(&imgCallback, _1, _2));
   ros::spin();

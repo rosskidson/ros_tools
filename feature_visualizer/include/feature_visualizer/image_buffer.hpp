@@ -47,10 +47,7 @@ ImageType* ImageBuffer<ImageType>::retrieveImageFromCamInfo(const sensor_msgs::C
 {
   for (int i = buffer_.size(); i >= 0; i--)
     if (buffer_[i].second.header.seq == cinfo.header.seq)
-  {
-      ROS_INFO_STREAM("idx " << i);
       return &(buffer_[i].first);
-  }
   return NULL;
 }
 

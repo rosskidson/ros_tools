@@ -29,19 +29,19 @@ const static std::string disparity_publish_topic = "used_disparity";
 
 const static int queue_size = 10;
 
-const static uint stereo_buffer_size = 10;
-const static uint image_buffer_size = 10;
+const static uint buffer_size = 10;
 const static uint disparity_buffer_size = 10;
 
 FeatureVisualization::FeatureVisualization():
     nh_ ("~"),
-    mono_image_buffer_(10),
-    left_iimage_buffer_(10),
-    right_iimage_buffer_(10)
+    mono_image_buffer_(buffer_size),
+    left_image_buffer_(buffer_size),
+    right_image_buffer_(buffer_size),
+    disparity_buffer_(disparity_buffer_size)
 {
     left_image_publisher_ = nh_.advertise<sensor_msgs::Image> (left_publish_topic, 1);
     right_image_publisher_ = nh_.advertise<sensor_msgs::Image> (right_publish_topic, 1);
-    dispaity_image_publisher_ = nh_.advertise<stereo_msgs::DisparityImage> (disparity_publish_topic, 1);
+    dispaity_image_publisher_ = nh_.advertise<sensor_msgs::Image> (disparity_publish_topic, 1);
 
     image_sub_ = new message_filters::Subscriber<sensor_msgs::Image>(nh_, image_topic, queue_size);
     image_cinfo_sub_ = new message_filters::Subscriber<sensor_msgs::CameraInfo>(nh_, image_cinfo_topic, queue_size);
@@ -61,9 +61,13 @@ FeatureVisualization::FeatureVisualization():
 
     features_sub_ = nh_.subscribe(features_topic, queue_size, &FeatureVisualization::featuresCallback, this);
 
+    cinfo_sub_ = nh_.subscribe(left_image_cinfo_topic, queue_size, &FeatureVisualization::cinfoCallback, this);
+
+    disparity_sub_ = nh_.subscribe(disparity_topic, queue_size, &FeatureVisualization::disparityCallback, this);
+
     image_sync_->registerCallback(boost::bind(&FeatureVisualization::imageCallback, this, _1, _2));
     stereo_sync_->registerCallback(boost::bind(&FeatureVisualization::stereoCallback, this, _1, _2, _3, _4));
-    disparity_sync_->registerCallback(boost::bind(&FeatureVisualization::disparityCallback, this, _1, _2 ));
+    //disparity_sync_->registerCallback(boost::bind(&FeatureVisualization::disparityCallback, this, _1, _2 ));
 
 }
 
@@ -72,15 +76,8 @@ void FeatureVisualization::stereoCallback(const sensor_msgs::ImageConstPtr& l_im
                                           const sensor_msgs::CameraInfoConstPtr& l_info_msg,
                                           const sensor_msgs::CameraInfoConstPtr& r_info_msg)
 {
-  left_iimage_buffer_.addImage(*l_image_msg, *l_info_msg);
-  right_iimage_buffer_.addImage(*r_image_msg, *r_info_msg);
-  //if(left_image_buffer_.size() > stereo_buffer_size)
-  //{
-  //  left_image_buffer_.erase(left_image_buffer_.begin());
-  //  right_image_buffer_.erase(right_image_buffer_.begin());
-  //}
-  //left_image_buffer_.push_back(imageWithInfo(*l_image_msg, *l_info_msg));
-  //right_image_buffer_.push_back(imageWithInfo(*r_image_msg, *r_info_msg));
+  left_image_buffer_.addImage(*l_image_msg, *l_info_msg);
+  right_image_buffer_.addImage(*r_image_msg, *r_info_msg);
 }
 
 void FeatureVisualization::imageCallback(const sensor_msgs::ImageConstPtr& image_msg,
@@ -89,64 +86,30 @@ void FeatureVisualization::imageCallback(const sensor_msgs::ImageConstPtr& image
   mono_image_buffer_.addImage(*image_msg, *info_msg);
 }
 
-void FeatureVisualization::disparityCallback(const stereo_msgs::DisparityImageConstPtr& disparity_image_msg,
-                                             const sensor_msgs::CameraInfoConstPtr& info_msg)
+void FeatureVisualization::disparityCallback(const stereo_msgs::DisparityImageConstPtr& disparity_image_msg)
+                                    //         const sensor_msgs::CameraInfoConstPtr& info_msg)
 {
-  if(disparity_image_buffer_.size() > disparity_buffer_size)
-    disparity_image_buffer_.erase(disparity_image_buffer_.begin());
-  disparity_image_buffer_.push_back(disparityWithInfo(*disparity_image_msg, *info_msg));
+  last_cinfo_ = *disparity_image_msg;
+}
+
+void FeatureVisualization::cinfoCallback(const sensor_msgs::CameraInfoConstPtr& info_msg)
+{
+  disparity_buffer_.addImage(last_cinfo_, *info_msg);
 }
 
 void FeatureVisualization::featuresCallback(const feature_msgs::stereo_matchesConstPtr feature_locations_msg_)
 {
   cv::Mat left_img, right_img, left_output_img, right_output_img;
-//  const int l_img_idx = findImageFromCamInfo(feature_locations_msg_->l_camera_info, &left_image_buffer_);
-//  ROS_DEBUG_STREAM("left img idx: " << l_img_idx);
-//  if (l_img_idx > -1)
-//  {
-//    left_img = convertSensorMsgToCV(left_image_buffer_[l_img_idx].first);
-//    drawFeatures(left_img, feature_locations_msg_->lc, feature_locations_msg_->lp, left_output_img);
-//  }
-//
-//  const int r_img_idx = findImageFromCamInfo(feature_locations_msg_->r_camera_info, &right_image_buffer_);
-//  ROS_DEBUG_STREAM("right img idx: " << l_img_idx);
-//  if (r_img_idx > -1)
-//  {
-//    right_img = convertSensorMsgToCV(right_image_buffer_[r_img_idx].first);
-//    drawFeatures(right_img, feature_locations_msg_->rc, feature_locations_msg_->rp, right_output_img);
-//  }
-//
-//  const int d_img_idx = findImageFromCamInfo(feature_locations_msg_->l_camera_info, &disparity_image_buffer_);
-//  ROS_DEBUG_STREAM("disp img idx: " << d_img_idx);
-//  if (d_img_idx > -1)
-//    dispaity_image_publisher_.publish(disparity_image_buffer_[d_img_idx].first);
-//
-//  left_image_publisher_.publish(convertCVToSensorMsg(left_output_img));
-//  right_image_publisher_.publish(convertCVToSensorMsg(right_output_img));
-
-  sensor_msgs::Image* img_ptr = left_iimage_buffer_.retrieveImageFromCamInfo(feature_locations_msg_->l_camera_info);
+  sensor_msgs::Image* img_ptr = left_image_buffer_.retrieveImageFromCamInfo(feature_locations_msg_->l_camera_info);
   if(img_ptr != NULL)
   {
     left_img = convertSensorMsgToCV(*img_ptr);
     drawFeatures(left_img, feature_locations_msg_->lc, feature_locations_msg_->lp, left_output_img);
     left_image_publisher_.publish(convertCVToSensorMsg(left_output_img));
   }
-}
-
-int FeatureVisualization::findImageFromCamInfo(const sensor_msgs::CameraInfo& cam_info, std::vector<imageWithInfo>* target_vector)
-{
-  for (std::vector<imageWithInfo>::const_iterator itr = target_vector->end(); itr != target_vector->begin(); itr--)
-    if (itr->second.header.seq == cam_info.header.seq)
-      return (itr - target_vector->begin());
-  return -1;
-}
-
-int FeatureVisualization::findImageFromCamInfo(const sensor_msgs::CameraInfo& cam_info, std::vector<disparityWithInfo>* target_vector)
-{
-  for (std::vector<disparityWithInfo>::const_iterator itr = target_vector->end(); itr != target_vector->begin(); itr--)
-    if (itr->second.header.seq == cam_info.header.seq)
-      return (itr - target_vector->begin());
-  return -1;
+  stereo_msgs::DisparityImage* disp_ptr = disparity_buffer_.retrieveImageFromCamInfo(feature_locations_msg_->l_camera_info);
+  if((disp_ptr != NULL) && (img_ptr != NULL))
+    overlayAndPublishDisparity(*disp_ptr, left_output_img);
 }
 
 void FeatureVisualization::drawFeatures(const cv::Mat& image,
@@ -160,9 +123,43 @@ void FeatureVisualization::drawFeatures(const cv::Mat& image,
   {
     cv::line(output_img, cv::Point(current_features[i].u, current_features[i].v),  cv::Point(previous_features[i].u, previous_features[i].v), cv::Scalar(100,255,255));
     cv::circle(output_img,  cv::Point(current_features[i].u, current_features[i].v), 1, cv::Scalar(0,255,255), /*thickness*/1, /*lineType*/8, /*shift*/0);
-
-   // ROS_INFO_STREAM("u " << current_features[i].u << " v " << current_features[i].v);
   }
+}
+
+void FeatureVisualization::overlayAndPublishDisparity(const stereo_msgs::DisparityImage& disparity_img, cv::Mat imageWithFeatures)
+{
+  //TODO:: find a better way to convert disparity img to cv.
+  const float d_max = disparity_img.max_disparity - disparity_img.min_disparity;
+  sensor_msgs::ImagePtr img_ptr(new sensor_msgs::Image(disparity_img.image));
+  cv::Mat disparity = convertSensorMsgToCV(img_ptr);
+  cv::Mat output_img;
+  overlayImages(imageWithFeatures, disparity, d_max, output_img);
+  dispaity_image_publisher_.publish(convertCVToSensorMsg(output_img));
+}
+
+void FeatureVisualization::overlayImages(cv::Mat& image, cv::Mat& disparity, const float disparity_max, cv::Mat& output_img)
+{
+  // convert image to 3 channels so it may be overlayed with color
+  cv::Mat image_rgb;
+  if(image.channels() == 1)
+    cv::cvtColor(image,image_rgb,CV_GRAY2RGB);
+  else
+    image_rgb = image;
+
+  // use hsv color space to assign disparity to a color
+  // hue = disparity
+  // sat = 1
+  // val = 0 (making the overall color black) where there is no disparity, otherwise 1
+  cv::Mat disparity_img_hsv(disparity.rows, disparity.cols, CV_8UC3);
+  for(int i=0; i< disparity.rows; i++) for(int j=0; j< disparity.cols; j++)
+    disparity_img_hsv.at<cv::Vec3b>(i,j) =
+      cv::Vec3b((disparity.at<float>(i,j)/disparity_max)*255, 255, 255*((disparity.at<float>(i,j) == -1) ? 0 : 1));
+
+  //convert back to rgb for overlaying images
+  cv::Mat disparity_img_rgb;
+  cv::cvtColor(disparity_img_hsv,disparity_img_rgb, CV_HSV2RGB);
+
+  cv::addWeighted( image_rgb, 1.0, disparity_img_rgb, 0.5, 0.0, output_img);
 }
 
 
