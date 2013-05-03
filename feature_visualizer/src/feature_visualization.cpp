@@ -61,13 +61,9 @@ FeatureVisualization::FeatureVisualization():
 
     features_sub_ = nh_.subscribe(features_topic, queue_size, &FeatureVisualization::featuresCallback, this);
 
-    cinfo_sub_ = nh_.subscribe(left_image_cinfo_topic, queue_size, &FeatureVisualization::cinfoCallback, this);
-
-    disparity_sub_ = nh_.subscribe(disparity_topic, queue_size, &FeatureVisualization::disparityCallback, this);
-
     image_sync_->registerCallback(boost::bind(&FeatureVisualization::imageCallback, this, _1, _2));
     stereo_sync_->registerCallback(boost::bind(&FeatureVisualization::stereoCallback, this, _1, _2, _3, _4));
-    //disparity_sync_->registerCallback(boost::bind(&FeatureVisualization::disparityCallback, this, _1, _2 ));
+    disparity_sync_->registerCallback(boost::bind(&FeatureVisualization::disparityCallback, this, _1, _2 ));
 
 }
 
@@ -86,15 +82,10 @@ void FeatureVisualization::imageCallback(const sensor_msgs::ImageConstPtr& image
   mono_image_buffer_.addImage(*image_msg, *info_msg);
 }
 
-void FeatureVisualization::disparityCallback(const stereo_msgs::DisparityImageConstPtr& disparity_image_msg)
-                                    //         const sensor_msgs::CameraInfoConstPtr& info_msg)
+void FeatureVisualization::disparityCallback(const stereo_msgs::DisparityImageConstPtr& disparity_image_msg,
+                                             const sensor_msgs::CameraInfoConstPtr& info_msg)
 {
-  last_cinfo_ = *disparity_image_msg;
-}
-
-void FeatureVisualization::cinfoCallback(const sensor_msgs::CameraInfoConstPtr& info_msg)
-{
-  disparity_buffer_.addImage(last_cinfo_, *info_msg);
+  disparity_buffer_.addImage(*disparity_image_msg, *info_msg);
 }
 
 void FeatureVisualization::featuresCallback(const feature_msgs::stereo_matchesConstPtr feature_locations_msg_)
@@ -108,6 +99,10 @@ void FeatureVisualization::featuresCallback(const feature_msgs::stereo_matchesCo
     left_image_publisher_.publish(convertCVToSensorMsg(left_output_img));
   }
   stereo_msgs::DisparityImage* disp_ptr = disparity_buffer_.retrieveImageFromCamInfo(feature_locations_msg_->l_camera_info);
+  // calculation of disparity sometimes fails
+  // therefore just take the most recent one in the buffer when none is found for visualization
+  if(disp_ptr == NULL)
+    disp_ptr = disparity_buffer_.getLastImage();
   if((disp_ptr != NULL) && (img_ptr != NULL))
     overlayAndPublishDisparity(*disp_ptr, left_output_img);
 }

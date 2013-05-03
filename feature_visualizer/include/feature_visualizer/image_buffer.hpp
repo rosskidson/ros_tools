@@ -23,6 +23,8 @@ public:
 
     ImageType* retrieveImageFromCamInfo(const sensor_msgs::CameraInfo& cinfo);
 
+    ImageType* getLastImage();
+
 private:
   std::vector<ImageWithInfo> buffer_;
   uint buffer_size_;
@@ -45,11 +47,16 @@ void ImageBuffer<ImageType>::addImage(const ImageType& image, const sensor_msgs:
 template <class ImageType>
 ImageType* ImageBuffer<ImageType>::retrieveImageFromCamInfo(const sensor_msgs::CameraInfo& cinfo)
 {
-  for (int i = buffer_.size(); i >= 0; i--)
+  for (int i = buffer_.size()-1; i >= 0; i--)
     if (buffer_[i].second.header.seq == cinfo.header.seq)
       return &(buffer_[i].first);
   return NULL;
 }
 
+template <class ImageType>
+ImageType* ImageBuffer<ImageType>::getLastImage()
+{
+  return &(buffer_.back().first);
+}
 
 #endif // IMAGE_BUFFER_HPP_

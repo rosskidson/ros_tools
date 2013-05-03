@@ -54,8 +54,8 @@ public:
   void imageCallback(const sensor_msgs::ImageConstPtr& image_msg,
                      const sensor_msgs::CameraInfoConstPtr& info_msg);
 
-  void disparityCallback(const stereo_msgs::DisparityImageConstPtr& disparity_msg);
-                         //const sensor_msgs::CameraInfoConstPtr& info_msg);
+  void disparityCallback(const stereo_msgs::DisparityImageConstPtr& disparity_msg,
+                         const sensor_msgs::CameraInfoConstPtr& info_msg);
 
   void featuresCallback(const feature_msgs::stereo_matchesConstPtr feature_locations_msg_);
 
@@ -63,13 +63,9 @@ public:
                      const std::vector<feature_msgs::coords>& current_features,
                      const std::vector<feature_msgs::coords>& previous_features,
                      cv::Mat& output_img);
-
   void overlayAndPublishDisparity(const stereo_msgs::DisparityImage& disparity_img, cv::Mat imageWithFeatures);
-
+  
   void overlayImages(cv::Mat& image, cv::Mat& disparity, const float disparity_max, cv::Mat& output_img);
-
-  void cinfoCallback(const sensor_msgs::CameraInfoConstPtr& info_msg);
-
 private:
   ros::NodeHandle nh_;
   ros::Publisher left_image_publisher_;
@@ -79,8 +75,6 @@ private:
   ros::Subscriber image_subscriber_;
   ros::Subscriber stereo_subscriber_;
   ros::Subscriber features_sub_;
-  ros::Subscriber cinfo_sub_;
-  ros::Subscriber disparity_sub_;
 
   message_filters::Synchronizer<imageSyncPolicy> *image_sync_;
   message_filters::Synchronizer<stereoSyncPolicy> *stereo_sync_;
@@ -91,13 +85,10 @@ private:
   message_filters::Subscriber<sensor_msgs::CameraInfo> *left_image_cinfo_sub_;
   message_filters::Subscriber<sensor_msgs::Image> *right_image_sub_;
   message_filters::Subscriber<sensor_msgs::CameraInfo> *right_image_cinfo_sub_;
-
   message_filters::Subscriber<stereo_msgs::DisparityImage> *disparity_image_sub_;
 
   ImageBuffer<sensor_msgs::Image> mono_image_buffer_, left_image_buffer_, right_image_buffer_;
   ImageBuffer<stereo_msgs::DisparityImage> disparity_buffer_;
-
-  stereo_msgs::DisparityImage last_cinfo_;
 
 
 };
