@@ -29,10 +29,10 @@ pcd_writer
 - convert a text file of x,y,z coords to a pcd file
 
 tf_broadcaster
--publishes tfs
+- publishes tfs
 
 topic_synchronizer
-subscribes to 2 topics and reports how much out of sync they are.  I used this to try and 2 cameras by resetting one camera when it went too far out of sync
+- subscribes to 2 topics and reports how much out of sync they are.  I used this to try and 2 cameras by resetting one camera when it went too far out of sync
 
 trajectory_recorder
 - subscribes to tf and writes to disk
