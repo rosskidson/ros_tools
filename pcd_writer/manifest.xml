@@ -1,0 +1,16 @@
+<package>
+  <description brief="evaluation_tools">
+
+     pcd_writer
+
+  </description>
+  <author>Ross Kidson</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/evaluation_tools</url>
+  <depend package="roscpp"/>
+  <depend package="pcl"/>
+
+</package>
+
+

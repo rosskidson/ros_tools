@@ -1,0 +1,18 @@
+<package>
+  <description brief="bag_scripts">
+
+     bag_scripts
+
+  </description>
+  <author>Ross Kidson</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/bag_scripts</url>
+  <depend package="rospy"/>
+  <depend package="sensor_msgs"/>
+  <depend package="std_msgs"/>
+  <depend package="rosbag"/>
+
+</package>
+
+

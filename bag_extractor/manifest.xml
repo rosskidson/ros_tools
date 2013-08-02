@@ -1,0 +1,19 @@
+<package>
+  <description brief="bag_extractor">
+
+     bag_extractor
+
+  </description>
+  <author>Ross Kidson</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/bag_extractor</url>
+  <depend package="roscpp"/>
+  <depend package="rosbag"/>
+  <depend package="image_transport"/>
+  <depend package="opencv2"/>
+  <depend package="cv_bridge"/>
+
+</package>
+
+

@@ -1,0 +1,17 @@
+<package>
+  <description brief="topic_synchronizer">
+
+     topic_synchronizer
+
+  </description>
+  <author>Ross Kidson</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/topic_synchronizer</url>
+  <depend package="roscpp"/>
+  <depend package="image_transport"/>
+  <depend package="std_msgs"/>
+
+</package>
+
+
