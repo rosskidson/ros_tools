@@ -4,6 +4,9 @@ ros_tools
 Whenever I need a simple ros node for processing/visualization, I added it to this respository.
 So there is a lot of ros boiler plate code here
 
+align
+- pure cpp (only uses file io/ stl)
+- takes 2 trajectories and generates correspondences using time stamps
 
 bag_extractor 
 - takes stereo images from a bag file and write to disk
