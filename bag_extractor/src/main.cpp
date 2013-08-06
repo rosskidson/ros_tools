@@ -18,11 +18,17 @@
 #include <iostream>
 
 int main(int argc, char **argv) {
-  std::stringstream bagname;
-  bagname << "/data/2013-05-07-20-04-35.bag";
+  //bagname << "/data/2013-05-07-20-04-35.bag";
+  if(argc < 2){
+    ROS_ERROR("Please provide bag file as argument: rosrun bag_extractor bag_extractor <bagname.bag>");
+    exit(0);
+  }
+  std::string bagname;
+  bagname = argv[1];
+  ROS_INFO_STREAM("bag name" << bagname);
 
   rosbag::Bag bag;
-  bag.open(bagname.str(), rosbag::bagmode::Read);
+  bag.open(bagname, rosbag::bagmode::Read);
 
   std::vector<std::string> topics;
   topics.push_back(std::string("/stereo/left/image_rect"));
