@@ -40,3 +40,6 @@ topic_synchronizer
 
 trajectory_recorder
 - subscribes to tf and writes to disk
+
+transform_pointcloud
+- apply a rigid transformation to a pcd file
