@@ -17,13 +17,14 @@ int
   pcl::PointCloud<pcl::PointXYZ> cloud;
 
   std::vector<std::string> words;
-  const std::string key_name = "xyz";
+  const std::string key_name = "v";
   std::ifstream in(filename.c_str());
   while(in) {
     std::string word;
     in >> word;
     if(word.compare(key_name) == 0)
     {
+      in >> word; //remove id
       Eigen::Vector3d vec;
       for(int i=0; i<3; i++) in >> vec[i]; // read in x y z
       pcl::PointXYZ p;                    //create pcl point
