@@ -38,7 +38,6 @@ docs
 cpp
 
 #some data types
-*.pcd
 *.jpg
 
 #temp files

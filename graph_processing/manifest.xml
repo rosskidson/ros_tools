@@ -1,0 +1,16 @@
+<package>
+  <description brief="graph_processing">
+
+     graph_processing
+
+  </description>
+  <author>Ross Kidson</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/graph_processing</url>
+  <depend package="roscpp"/>
+  <depend package="pcl"/>
+
+</package>
+
+

@@ -31,6 +31,12 @@ image_repair
 - subscribe to a ros image, convert to cv::mat, convert back to ros and republish
 - written to fix ros_images with image.width != image.step
 
+graph processing
+- tools for working with exported g2o files
+- convert g2o to pcd
+- compare g2o graphs against a template graph
+- align graphs using icp of pointclouds
+
 pcd_writer
 - convert a text file of x,y,z coords to a pcd file
 
