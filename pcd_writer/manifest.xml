@@ -10,6 +10,7 @@
   <url>http://ros.org/wiki/evaluation_tools</url>
   <depend package="roscpp"/>
   <depend package="pcl"/>
+  <depend package="pcl_ros"/>
 
 </package>
 
