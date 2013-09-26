@@ -1,0 +1,15 @@
+<package>
+  <description brief="align">
+
+     align
+
+  </description>
+  <author>FIXED-TERM Kidson Ross (CR/RTC1.1-NA)</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/align</url>
+  <depend package="roscpp"/>
+
+</package>
+
+

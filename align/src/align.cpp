@@ -4,6 +4,8 @@
 #include <fstream>
 #include <vector>
 
+#include <iomanip>
+
 //#include <Eigen/Core>
 
 struct StampedPose
@@ -33,7 +35,7 @@ void readFile(const std::string & filename, std::vector<StampedPose> & output_ve
     {
       double text_input[4];
       for(int i=0; i<4; i++)
-        in >> text_input[i];
+        in >> std::setprecision(20) >> text_input[i];
       output_vector.push_back(StampedPose (text_input[0], text_input[1], text_input[2], text_input[3]));
     }
   }
@@ -61,7 +63,7 @@ void alignVectors(const std::vector<StampedPose> & vector_1,
         closest_pose_itr = itr_inner;
       }
     }
-//    std::cout << "time diff " << smallest_time << "\n";
+    std::cout << "time diff " << smallest_time << "\n";
     aligned_vector.push_back(std::make_pair<StampedPose, StampedPose>(*itr, *closest_pose_itr));
   }
 }
