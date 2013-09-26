@@ -25,12 +25,11 @@ struct StampedPose
 // takes a filename and reads entries and records them into a vector of StampedPose
 void readFile(const std::string & filename, std::vector<StampedPose> & output_vector)
 {
-  const std::string key_name = "p";
   std::ifstream in(filename.c_str());
   while(in) {
     std::string word;
     in >> word;
-    if(word.compare(key_name) == 0)
+    if(in.peek()  == '\n')
     {
       double text_input[4];
       for(int i=0; i<4; i++)
@@ -62,7 +61,7 @@ void alignVectors(const std::vector<StampedPose> & vector_1,
         closest_pose_itr = itr_inner;
       }
     }
-    std::cout << "time diff " << smallest_time << "\n";
+//    std::cout << "time diff " << smallest_time << "\n";
     aligned_vector.push_back(std::make_pair<StampedPose, StampedPose>(*itr, *closest_pose_itr));
   }
 }
@@ -97,6 +96,9 @@ int
   std::vector<StampedPose> trajectory_1, trajectory_2;
   readFile(filename_a, trajectory_1);
   readFile(filename_b, trajectory_2);
+
+  std::cout << "t1 " << trajectory_1.size() << "\n";
+  std::cout << "t2 " << trajectory_2.size() << "\n";
 
   std::vector<std::pair<StampedPose, StampedPose> > aligned_vector;
   if(trajectory_1.size() > trajectory_2.size())
