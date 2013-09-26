@@ -22,9 +22,9 @@ int
   while(in) {
     std::string word;
     in >> word;
-    if(word.compare(key_name) == 0)
+    if(in.peek()  == '\n')
     {
-      in >> word; //remove id
+      in >> word; //remove timestamp
       Eigen::Vector3d vec;
       for(int i=0; i<3; i++) in >> vec[i]; // read in x y z
       pcl::PointXYZ p;                    //create pcl point
