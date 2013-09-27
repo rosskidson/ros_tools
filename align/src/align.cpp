@@ -108,7 +108,7 @@ int
   else
     alignVectors(trajectory_1, trajectory_2, aligned_vector);
 
-  printAlignedVector("output.txt", aligned_vector);
+  printAlignedVector("aligned_output.txt", aligned_vector);
 
 }
 
