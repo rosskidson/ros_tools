@@ -10,7 +10,7 @@ int
 {
   if(argc < 2)
   {
-    std::cout << "please provide g2o filename to be converted\n";
+    std::cout << "please provide filename to be converted. Format 'timestamp x y z'\n";
     exit(0);
   }
   std::string filename(argv[1]);
