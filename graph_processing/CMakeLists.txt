@@ -21,15 +21,21 @@ set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 #uncomment if you have defined services
 #rosbuild_gensrv()
 
+find_package(PCL 1.3 REQUIRED)
+include_directories(${PCL_INCLUDE_DIRS})
+link_directories(${PCL_LIBRARY_DIRS})
+add_definitions(${PCL_DEFINITIONS})
+
 #common commands for building c++ executables and libraries
 #rosbuild_add_library(${PROJECT_NAME} src/example.cpp)
 #target_link_libraries(${PROJECT_NAME} another_library)
 #rosbuild_add_boost_directories()
 #rosbuild_link_boost(${PROJECT_NAME} thread)
 
-rosbuild_add_executable(g2o_add_edges src/g2o_add_edges.cpp)
-rosbuild_add_executable(g2o_replace_weak_edges src/g2o_replace_weak_edges.cpp)
-rosbuild_add_executable(g2o_pcd_converter src/g2o_pcd_converter.cpp)
+rosbuild_add_executable(g2o_make_random src/g2o_make_random.cpp)
+#rosbuild_add_executable(g2o_replace_weak_edges src/g2o_replace_weak_edges.cpp)
+#rosbuild_add_executable(g2o_pcd_converter src/g2o_pcd_converter.cpp)
 rosbuild_add_executable(icp src/icp.cpp)
 rosbuild_add_executable(pcd_writer src/pcd_writer.cpp)
-#target_link_libraries(example ${PROJECT_NAME})
+target_link_libraries(icp ${PCL_LIBRARIES})
+target_link_libraries(pcd_writer ${PCL_LIBRARIES})
