@@ -25,7 +25,7 @@ struct StampedPose
 
 // read file
 // takes a filename and reads entries and records them into a vector of StampedPose
-void readFile(const std::string & filename, std::vector<StampedPose> & output_vector)
+void readFile(const std::string & filename, std::vector<StampedPose> & output_vector, const double add_offset = 0.0)
 {
   std::ifstream in(filename.c_str());
   while(in) {
@@ -36,7 +36,7 @@ void readFile(const std::string & filename, std::vector<StampedPose> & output_ve
       double text_input[4];
       for(int i=0; i<4; i++)
         in >> std::setprecision(20) >> text_input[i];
-      output_vector.push_back(StampedPose (text_input[0], text_input[1], text_input[2], text_input[3]));
+      output_vector.push_back(StampedPose ((text_input[0]+add_offset), text_input[1], text_input[2], text_input[3]));
     }
   }
 }
@@ -90,13 +90,20 @@ int
   if(argc < 3)
   {
     std::cout << "please provide 2 files to align\n";
+    std::cout << "optional third argument time offset to be applied to the first file\n";
     exit(0);
   }
   std::string filename_a(argv[1]);
   std::string filename_b(argv[2]);
+  double time_offset = 0.0;
+  if(argc == 4)
+  {
+    time_offset = atof(argv[3]);
+    std::cout << " read in time offset " << time_offset << ".  Will be applied to first file\n";
+  }
 
   std::vector<StampedPose> trajectory_1, trajectory_2;
-  readFile(filename_a, trajectory_1);
+  readFile(filename_a, trajectory_1, time_offset);
   readFile(filename_b, trajectory_2);
 
   std::cout << "t1 " << trajectory_1.size() << "\n";
