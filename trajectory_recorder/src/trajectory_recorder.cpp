@@ -3,6 +3,7 @@
 #include <tf/transform_broadcaster.h>
 
 //file io
+#include <iomanip>
 #include <iostream>
 #include <fstream>
 
@@ -43,7 +44,10 @@ int main(int argc, char** argv){
 
        if(previous_stamp != transform.stamp_)
        {
-       file_output << transform.stamp_ << " " << transform.getOrigin().x()
+         file_output 
+	  << std::setprecision(15) 
+          << transform.stamp_ 
+	  << " " << transform.getOrigin().x()
           << " " << transform.getOrigin().y()
           << " " << transform.getOrigin().z()
           << " " << transform.getRotation().x()
