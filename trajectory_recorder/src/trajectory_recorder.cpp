@@ -45,9 +45,9 @@ int main(int argc, char** argv){
        if(previous_stamp != transform.stamp_)
        {
          file_output 
-	  << std::setprecision(15) 
+          << std::setprecision(15)
           << transform.stamp_ 
-	  << " " << transform.getOrigin().x()
+          << " " << transform.getOrigin().x()
           << " " << transform.getOrigin().y()
           << " " << transform.getOrigin().z()
           << " " << transform.getRotation().x()
